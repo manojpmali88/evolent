@@ -79,9 +79,16 @@ public class ContactInfoController {
 //			}
 //		}
 		JSONObject jobj = new JSONObject();
-		lContactInfoRepository.deleteById(id);
-		jobj.put("status", true);
-		jobj.put("message", "Record deleted successfully");
-		return new ResponseEntity<String>(jobj.toString(),HttpStatus.OK);
+		Optional<ContactInfo> lContactInfo = lContactInfoRepository.findById(id);
+		if(lContactInfo.get().getStatus().equals("Inactive")) {
+			lContactInfoRepository.deleteById(id);
+			jobj.put("status", true);
+			jobj.put("message", "Record deleted successfully");
+			return new ResponseEntity<String>(jobj.toString(),HttpStatus.OK);
+		} else {
+			jobj.put("status", false);
+			jobj.put("message", "User is active, cannot delete record");
+			return new ResponseEntity<String>(jobj.toString(),HttpStatus.OK);
+		}
 	}
 }
